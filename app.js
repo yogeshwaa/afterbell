@@ -12,3 +12,13 @@ function renderTimer(){const minutes=Math.floor(seconds/60),remaining=seconds%60
 setInterval(()=>{if(document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches)return;seconds=seconds>0?seconds-1:24*60+38;renderTimer()},1000);
 document.querySelector('#switch-demo').addEventListener('click',e=>{between=!between;seconds=between?12*60+8:24*60+38;renderTimer();document.querySelector('#demo-status').textContent=between?'UP NEXT / PERIOD 04':'IN CLASS / PERIOD 03';document.querySelector('#demo-subject').textContent=between?'Investigating Science':'Design & Technology';document.querySelector('#demo-time').textContent=between?'12:40 — 13:40':'11:00 — 12:00';document.querySelector('#demo-room').textContent=between?'Lab S02 / Ms Chen':'Room T04 / Ms Taylor';document.querySelector('.time-label').textContent=between?'UNTIL CLASS STARTS':'UNTIL THE BELL';const lessons=document.querySelectorAll('.lesson');lessons[1].classList.toggle('active',!between);lessons[1].lastElementChild.textContent=between?'DONE':'NOW';e.currentTarget.textContent=between?'Show in class ↗':'Show between classes ↗';});
 document.querySelector('#copy-url').addEventListener('click',async()=>{const status=document.querySelector('#copy-status');try{await navigator.clipboard.writeText('chrome://extensions');status.textContent='Copied. Paste chrome://extensions into the Chrome address bar.'}catch{status.textContent='Type chrome://extensions into the Chrome address bar.'}});
+
+// Keep the normal download navigation while opening the on-page setup guide.
+const installDialog=document.querySelector('#install-dialog');
+const installGuide=document.querySelector('#install-dialog-guide');
+for(const selector of ['#extension-guide','#guide']){const source=document.querySelector(selector);const clone=source.cloneNode(true);clone.removeAttribute('id');clone.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));installGuide.append(clone);}
+let beforeDialogOverflow='';
+document.querySelectorAll('a[download]').forEach(link=>link.addEventListener('click',()=>{if(installDialog.open)return;beforeDialogOverflow=document.body.style.overflow;installDialog.showModal();document.body.style.overflow='hidden';installDialog.scrollTop=0;document.querySelector('#install-dialog-title').focus({preventScroll:true});}));
+document.querySelector('#close-install-dialog').addEventListener('click',()=>installDialog.close());
+installDialog.addEventListener('close',()=>{document.body.style.overflow=beforeDialogOverflow;});
+installDialog.addEventListener('click',event=>{if(event.target!==installDialog)return;const r=installDialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)installDialog.close();});
