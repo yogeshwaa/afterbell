@@ -1,0 +1,18 @@
+{
+  "id": "./app.html",
+  "name": "Afterbell",
+  "short_name": "Afterbell",
+  "start_url": "./app.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f1f0ec",
+  "theme_color": "#f1f0ec",
+  "icons": [
+    {
+      "src": "web-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
