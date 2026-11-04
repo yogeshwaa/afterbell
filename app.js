@@ -18,7 +18,7 @@ const installDialog=document.querySelector('#install-dialog');
 const installGuide=document.querySelector('#install-dialog-guide');
 for(const selector of ['#extension-guide','#guide']){const source=document.querySelector(selector);const clone=source.cloneNode(true);clone.removeAttribute('id');clone.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));installGuide.append(clone);}
 let beforeDialogOverflow='';
-document.querySelectorAll('a[download]').forEach(link=>link.addEventListener('click',()=>{if(installDialog.open)return;beforeDialogOverflow=document.body.style.overflow;installDialog.showModal();document.body.style.overflow='hidden';installDialog.scrollTop=0;document.querySelector('#install-dialog-title').focus({preventScroll:true});}));
+document.querySelectorAll('a[download]:not([data-update-download])').forEach(link=>link.addEventListener('click',()=>{if(installDialog.open)return;beforeDialogOverflow=document.body.style.overflow;installDialog.showModal();document.body.style.overflow='hidden';installDialog.scrollTop=0;document.querySelector('#install-dialog-title').focus({preventScroll:true});}));
 document.querySelector('#close-install-dialog').addEventListener('click',()=>installDialog.close());
 installDialog.addEventListener('close',()=>{document.body.style.overflow=beforeDialogOverflow;});
 installDialog.addEventListener('click',event=>{if(event.target!==installDialog)return;const r=installDialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)installDialog.close();});

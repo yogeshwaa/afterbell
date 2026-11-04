@@ -9,3 +9,7 @@
 
 
 #demo-status{font-family:Helvetica,Arial,sans-serif;font-size:14px;font-weight:650;letter-spacing:0;line-height:1.5;color:#22221f;padding:7px 10px;border:1px solid #c83230;border-radius:99px;background:#f1f0ec}.clock .time-label{font-family:Helvetica,Arial,sans-serif;font-size:14px;font-weight:600;letter-spacing:0;color:#22221f}.clock>p:not(.room){font-size:14px;color:#22221f}
+.clock .eyebrow > i { width: 7px; height: 7px; flex: 0 0 7px; border-radius: 0; background: #d42d32; }
+
+.support-prompt { margin: 16px 0 0; }
+.support-link { font: 500 12px/1.5 Helvetica, Arial, sans-serif; color: inherit; text-decoration: underline; text-underline-offset: 3px; }

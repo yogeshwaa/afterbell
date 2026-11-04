@@ -1,0 +1,63 @@
+.support-body {
+  color-scheme: light dark;
+  margin: 0;
+  background: #f1f0ec;
+  color: #22221f;
+  font: 14px/1.65 Helvetica, Arial, sans-serif;
+}
+.support-page { max-width: 580px; margin: 0 auto; padding: 48px 24px; }
+.support-page h1 { font-size: 32px; letter-spacing: -.04em; margin: 28px 0 0; }
+.support-page h1::before {
+  content: '';
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 12px;
+  background: #d42d32;
+  vertical-align: middle;
+}
+.support-page h2 { font-size: 16px; margin: 0; }
+.support-page section { border-top: 1px solid #bdbbb3; padding: 18px 0; }
+.support-page section p { margin: 6px 0; }
+.support-page a { color: inherit; text-underline-offset: 3px; }
+.support-page footer { margin-top: 30px; font-size: 12px; }
+.feedback-dialog {
+  box-sizing: border-box;
+  width: min(440px, calc(100vw - 28px));
+  max-height: calc(100dvh - 28px);
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #bdbbb3;
+  border-radius: 18px;
+  background: var(--bg, #f1f0ec);
+  color: var(--fg, #22221f);
+  font: 13px/1.5 Helvetica, Arial, sans-serif;
+}
+.feedback-dialog::backdrop { background: #0008; }
+.feedback-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.feedback-heading h2 { margin: 0; font: 700 20px/1.2 Helvetica, Arial, sans-serif; }
+.feedback-heading h2::before { content: ''; display: inline-block; width: 7px; height: 7px; margin-right: 8px; background: #d42d32; vertical-align: middle; }
+.feedback-form { display: grid; gap: 10px; margin-top: 12px; }
+.feedback-form label { display: grid; gap: 4px; }
+.feedback-form [hidden] { display: none; }
+.feedback-form .feedback-check { grid-template-columns: auto 1fr; align-items: start; }
+.feedback-dialog :is(select, textarea, input, button) { font: inherit; color: inherit; }
+.feedback-dialog :is(select, textarea, input[type='email']) {
+  box-sizing: border-box;
+  width: 100%;
+  background: transparent;
+  border: 1px solid #8d8b84;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 16px;
+}
+.feedback-dialog textarea { resize: vertical; }
+.feedback-dialog button { border: 1px solid currentColor; border-radius: 999px; padding: 7px 13px; background: transparent; cursor: pointer; }
+.feedback-dialog button:disabled { opacity: .6; cursor: default; }
+.feedback-send { justify-self: start; }
+.feedback-status { min-height: 1.5em; margin: 0; }
+@media (prefers-color-scheme: dark) {
+  .support-body { background: #191918; color: #f1f0ec; }
+  .support-body .feedback-dialog { background: #191918; color: #f1f0ec; }
+  .support-page section { border-color: #51514b; }
+}
