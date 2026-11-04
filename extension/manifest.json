@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "Afterbell: Class Countdown",
+  "version": "1.11",
+  "description": "Import your Sentral ICS timetable. See your current class, time remaining, room and teacher.",
+  "permissions": [
+    "storage",
+    "alarms"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Afterbell",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "short_name": "Afterbell",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; connect-src https://yogeshwaa.github.io/afterbell/extension-version.json; img-src 'self' data:; media-src 'self' data: blob:; font-src 'self'; style-src 'self' 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-src 'none'"
+  },
+  "minimum_chrome_version": "116",
+  "optional_permissions": [
+    "notifications",
+    "offscreen"
+  ]
+}

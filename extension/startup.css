@@ -1,0 +1,23 @@
+.startup-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  padding-top: min(22vh, 120px);
+  background: var(--bg);
+  color: var(--fg);
+  pointer-events: none;
+}
+
+.startup-splash .brand-logo {
+  display: block;
+  width: 110px;
+  height: 110px;
+  overflow: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .startup-splash { display: none; }
+}
