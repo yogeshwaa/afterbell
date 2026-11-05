@@ -127,4 +127,4 @@ Countdown colons use one circular dot per position (two dots total), independent
 
 If a newer release is available, **Update** opens the download and reload instructions. **Remind me later** hides the notice for 24 hours for that version.
 
-Copyright © Yogesh 2026
+Copyright © WA 2026
