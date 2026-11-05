@@ -25,14 +25,14 @@ dialog.innerHTML = `
     <small>Leave out passwords, school details and timetable files.</small>
     <label class="feedback-check">
       <input type="checkbox" name="followup">
-      Yogesh can email me to follow up.
+      The Afterbell support team can email me to follow up.
     </label>
     <label id="feedback-email" hidden>Email for replies
       <input type="email" name="email" autocomplete="email" maxlength="254" disabled>
     </label>
     <label class="feedback-check">
       <input type="checkbox" name="consent" required>
-      I agree to send my message and the Afterbell area I came from to Yogesh via Formspree.
+      I agree to send my message and the Afterbell area I came from to Afterbell support via Formspree.
     </label>
     <button class="feedback-send" type="submit">Send feedback</button>
     <p class="feedback-status" role="status"></p>

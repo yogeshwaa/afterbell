@@ -1,7 +1,7 @@
 # afterbell
 Afterbell — a customisable school timetable and class countdown for desktop Chrome.
 
-Copyright © Yogesh 2026
+Copyright © WA 2026
 
 For extension releases, publish the new ZIP and download links together with
 the matching version in extension-version.json. Installed copies with update
