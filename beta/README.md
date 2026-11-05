@@ -4,9 +4,9 @@ These are the 15 available development builds. Use v1.11 for the current Beta. T
 
 | Release | Download | SHA-256 |
 | --- | --- | --- |
-| v1.11 Beta | [ZIP](Afterbell-v1.11-Beta.zip) | bf5c6121589d8a5fbe8d74cc89189434388905506d005f1001833f3fd19652af |
-| v1.10.3 Beta | [ZIP](Afterbell-v1.10.3-Beta.zip) | 0d9218651daf314d1f831bee0a3286e35b6f77b1adc431f028a7ff29f1c261f0 |
-| v1.10.2 Beta | [ZIP](Afterbell-v1.10.2-Beta.zip) | 7e635a17514a5693e701676014a31a4a594b1df4ef906ed313d4e50645a2aca7 |
+| v1.11 Beta | [ZIP](Afterbell-v1.11-Beta.zip) | c6c3af5e8178876d06e70621942fd047f5ab72785bb4d00e8ba63ebc479f28bf |
+| v1.10.3 Beta | [ZIP](Afterbell-v1.10.3-Beta.zip) | 0a8d8958beac4205e0d2afcef7bb272eef0a9df6d97173962dd2a2a679fec79b |
+| v1.10.2 Beta | [ZIP](Afterbell-v1.10.2-Beta.zip) | b1ec177bfb7bbcbff47d73a121da9d2c587fe17d3ea90457cc9eecded3531fbe |
 | v1.10.1 Beta | [ZIP](Afterbell-v1.10.1-Beta.zip) | 4cf9c330eef494876393b3b02d37fcc829593f07c3c6937e126580d7c3a3e2da |
 | v1.10.0 Beta | [ZIP](Afterbell-v1.10.0-Beta.zip) | 0cacd50e6d8c5bf4f2228337d9637e03780616c2b3a745167fa8fbd6954bf288 |
 | v1.9.0 Beta | [ZIP](Afterbell-v1.9.0-Beta.zip) | 520e95df6322e37707e9cf509f7426e1ad407f6eb4bdd9af5fd5f3dd332721b2 |
@@ -20,6 +20,6 @@ These are the 15 available development builds. Use v1.11 for the current Beta. T
 | v1.3.0 Beta | [ZIP](Afterbell-v1.3.0-Beta.zip) | 3fd4ebabbb833904080c2a3ad295b7aca5212e5da65ca2ead87f633fe812e151 |
 | v1.2.0 Beta | [ZIP](Afterbell-v1.2.0-Beta.zip) | 36013d1b01419bb2f5fcfc75332768c018e7ad3ecd09e1b0ce91698635c46cb4 |
 
-Microsoft Defender custom scan of the 15 ZIPs on 5 November 2026 reported no threats (exit code 0). The hashes identify the files that were scanned.
+Microsoft Defender scanned all 15 Beta ZIPs and found no threats (exit code 0). The checksums identify the scanned files.
 
-For installation, follow the [Afterbell guide](https://yogeshwaa.github.io/afterbell/#extension-guide).
+[Installation guide](https://yogeshwaa.github.io/afterbell/#extension-guide)
