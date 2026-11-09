@@ -1,9 +1,10 @@
 # Afterbell Beta archive
 
-These are the 15 available development builds. Use v1.11 for the current Beta. The ZIPs preserve each version as packaged. The current extension source is in [extension/](../extension/).
+These are the 16 available development builds. Use v1.14.1 for the current Beta. The ZIPs preserve each version as packaged. The current extension source is in [extension/](../extension/).
 
 | Release | Download | SHA-256 |
 | --- | --- | --- |
+| v1.14.1 Beta | [ZIP](Afterbell-v1.14.1-Beta.zip) | 5d7fb95a709159e60c12ee27a37c0deaf8814134e7208566cfdad50aae1a4326 |
 | v1.11 Beta | [ZIP](Afterbell-v1.11-Beta.zip) | c6c3af5e8178876d06e70621942fd047f5ab72785bb4d00e8ba63ebc479f28bf |
 | v1.10.3 Beta | [ZIP](Afterbell-v1.10.3-Beta.zip) | 0a8d8958beac4205e0d2afcef7bb272eef0a9df6d97173962dd2a2a679fec79b |
 | v1.10.2 Beta | [ZIP](Afterbell-v1.10.2-Beta.zip) | b1ec177bfb7bbcbff47d73a121da9d2c587fe17d3ea90457cc9eecded3531fbe |
@@ -23,3 +24,5 @@ These are the 15 available development builds. Use v1.11 for the current Beta. T
 Microsoft Defender scanned all 15 Beta ZIPs and found no threats (exit code 0). The checksums identify the scanned files.
 
 [Installation guide](https://yogeshwaa.github.io/afterbell/#extension-guide)
+
+v1.14.1 was scanned with Microsoft Defender on 10 November 2026. No threats detected (exit code 0).
