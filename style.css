@@ -77,3 +77,5 @@ footer :is(p, small, span) { font: 400 12px/1.5 Helvetica, Arial, sans-serif; le
   .install-dialog-header, .install-dialog-body { padding: 16px; }
   .install-dialog-header h2 { font-size: 24px; }
 }
+
+body:has(#install-dialog[open]) { overflow: hidden; }

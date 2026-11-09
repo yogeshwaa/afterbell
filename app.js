@@ -18,38 +18,21 @@ const installDialog=document.querySelector('#install-dialog');
 const installGuide=document.querySelector('#install-dialog-guide');
 for(const selector of ['#extension-guide','#guide']){const source=document.querySelector(selector);const clone=source.cloneNode(true);clone.removeAttribute('id');clone.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));installGuide.append(clone);}
 
-let beforeDialogOverflow = null;
 
-function restorePageScroll() {
-  if (beforeDialogOverflow === null) return;
-  document.body.style.overflow = beforeDialogOverflow;
-  beforeDialogOverflow = null;
-}
-
-function closeInstallGuide() {
-  installDialog.close();
-  restorePageScroll();
-}
-
+// Native dialog state controls page scrolling through CSS.
 document.querySelectorAll('a[download]:not([data-update-download])').forEach(link => {
   link.addEventListener('click', () => {
     if (installDialog.open) return;
-    if (beforeDialogOverflow === null) beforeDialogOverflow = document.body.style.overflow;
     installDialog.showModal();
-    document.body.style.overflow = 'hidden';
     installDialog.scrollTop = 0;
     document.querySelector('#install-dialog-title').focus({ preventScroll: true });
   });
 });
-document.querySelector('#close-install-dialog').addEventListener('click', closeInstallGuide);
-installDialog.addEventListener('cancel', restorePageScroll);
-installDialog.addEventListener('close', () => {
-  if (!installDialog.open) restorePageScroll();
-});
+document.querySelector('#close-install-dialog').addEventListener('click', () => installDialog.close());
 installDialog.addEventListener('click', event => {
   if (event.target !== installDialog) return;
   const bounds = installDialog.getBoundingClientRect();
   if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) {
-    closeInstallGuide();
+    installDialog.close();
   }
 });
