@@ -26,7 +26,7 @@ export function icon(name,dotted=true) {
   }else{const path=document.createElementNS(ns,'path');path.setAttribute('d',paths[name]||paths.help);path.setAttribute('fill','none');path.setAttribute('stroke','currentColor');path.setAttribute('stroke-width','1.6');path.setAttribute('stroke-linecap','round');path.setAttribute('stroke-linejoin','round');svg.append(path);}
   return svg;
 }
-const controls={importShortcut:['upload'],helpShortcut:['help'],expand:['expand'],openSettings:['settings'],closeSettings:['close'],getStarted:['arrow','Get started'],haveFile:['upload',"I've downloaded my timetable"],setupGuide:['help','Read the guide'],setupImport:['upload','Import timetable'],openTab:['expand','Open in a tab'],fullscreen:['fullscreen'],replayWelcome:['reset','Show getting started'],goImport:['upload','Import timetable'],preview:['preview'],removeBackground:['trash','Remove upload'],clear:['trash','Remove timetable'],resetAppearance:['reset','Reset appearance'],applySettings:['check','Apply changes'],cancelSettings:['close','Cancel changes'],applyDraft:['check','Apply'],revertDraft:['close','Cancel'],previewSound:['preview','Preview sound'],testNotification:['calendar','Test notification'],removeSound:['trash','Remove audio']};
+const controls={importShortcut:['upload'],helpShortcut:['help'],expand:['expand'],openSettings:['settings'],closeSettings:['close'],closeHelp:['close'],getStarted:['arrow','Get started'],haveFile:['upload',"I've downloaded my timetable"],setupGuide:['help','Read the guide'],setupImport:['upload','Import timetable'],openTab:['expand','Open in a tab'],fullscreen:['fullscreen'],replayWelcome:['reset','Show getting started'],goImport:['upload','Import timetable'],preview:['preview'],removeBackground:['trash','Remove upload'],clear:['trash','Remove timetable'],resetAppearance:['reset','Reset appearance'],applySettings:['check','Apply changes'],cancelSettings:['close','Cancel changes'],applyDraft:['check','Apply'],revertDraft:['close','Cancel'],previewSound:['preview','Preview sound'],testNotification:['calendar','Test notification'],removeSound:['trash','Remove audio']};
 export function updateIcons(dotted) {
   for(const [id,[name,label]]of Object.entries(controls)){
     const el=document.getElementById(id);if(!el)continue;
@@ -39,3 +39,4 @@ export function updateIcons(dotted) {
   document.querySelectorAll('.settings-content summary').forEach(el=>{el.querySelector('.ui-icon')?.remove();el.append(icon(el.parentElement.open?'minus':'plus',dotted));});
   document.body.dataset.dotIcons=String(dotted);
 }
+

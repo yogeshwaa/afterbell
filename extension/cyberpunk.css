@@ -1,0 +1,124 @@
+body[data-theme=cyberpunk] {
+  --bg:#121018; --surface:#1a1722; --fg:#eef1db;
+  --muted:#b5b9a0; --line:#626b3d; --accent:#e0ff76; --signal:#80f6ec;
+}
+body[data-theme=cyberpunk][data-background=plain] {
+  background-image:radial-gradient(ellipse at 20% 0%,#27283a,transparent 62%);
+}
+body[data-theme=cyberpunk]::before {
+  content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent 0 3px,#ccd97309 3px 4px),
+             repeating-linear-gradient(90deg,transparent 0 47px,#ccd97313 47px 48px);
+}
+body[data-theme=cyberpunk] header { position:relative; border-bottom:3px double var(--line); }
+body[data-theme=cyberpunk] header::after {
+  content:""; position:absolute; bottom:-3px; right:0; width:26%; height:3px;
+  background:repeating-linear-gradient(120deg,var(--accent) 0 3px,transparent 3px 7px);
+  pointer-events:none;
+}
+body[data-theme=cyberpunk] :is(.hero,.schedule,.welcome,#settingsPanel,.settings-content details,.changes-bar) {
+  border-radius:2px;
+}
+body[data-theme=cyberpunk] .schedule {
+  background:var(--surface); border:1px solid var(--line); padding:14px;
+}
+body[data-theme=cyberpunk] .schedule > .row {
+  background:var(--accent); color:var(--bg); padding:2px 8px;
+}
+body[data-theme=cyberpunk] .schedule > .row input {
+  color:inherit; color-scheme:light; background:#e0ff76;
+}
+body[data-theme=cyberpunk] .schedule > .row input:focus-visible { outline-color:var(--bg); outline-offset:0; }
+body[data-theme=cyberpunk] .class.active {
+  background:linear-gradient(90deg,#80f6ec23,transparent);
+  box-shadow:inset 2px 0 var(--signal); padding-inline-start:8px;
+}
+body[data-theme=cyberpunk] .class.active :is(.pill,.times) { color:var(--signal); }
+body[data-theme=cyberpunk] .primary,
+body[data-theme=cyberpunk] .primary:disabled:hover { color:var(--bg); }
+
+body[data-theme=cyberpunk] .hero,
+body .hero[data-clock=cyberpunk],
+body #draftPreview .hero[data-clock=cyberpunk],
+body[data-theme=cyberpunk] #draftPreview .hero {
+  border-radius:2px; border-color:#687447; color:#eef1db;
+  background:repeating-linear-gradient(0deg,transparent 0 4px,#dfff7610 4px 5px),
+             linear-gradient(155deg,#22252a,#15131e 68%);
+  box-shadow:inset 0 0 0 4px #14131c,inset 0 0 0 5px #8c9e503b;
+}
+body[data-theme=cyberpunk] .hero::before,
+.hero[data-clock=cyberpunk]::before {
+  width:72px; left:12px; background:repeating-linear-gradient(120deg,#e0ff76 0 4px,transparent 4px 8px);
+}
+body[data-theme=cyberpunk] .hero::after,
+.hero[data-clock=cyberpunk]::after {
+  content:""; position:absolute; width:18px; height:18px; inset:auto 5px 5px auto;
+  border:1px solid #80f6ec; border-width:0 1px 1px 0; pointer-events:none;
+}
+body[data-theme=cyberpunk] .hero :is(.eyebrow,.meta,small),
+body .hero[data-clock=cyberpunk] :is(.eyebrow,.meta,small) { color:#c1c7a8; }
+body[data-theme=cyberpunk] .hero .class-state,
+body .hero[data-clock=cyberpunk] .class-state {
+  display:inline-flex; padding:4px 11px; background:#292f23; border:1px solid #687447;
+  color:#e0ff76; text-transform:uppercase;
+}
+.hero[data-clock=cyberpunk] .class-state::before { background:#80f6ec; }
+body[data-theme=cyberpunk] .hero .count,
+body .hero[data-clock=cyberpunk] .count {
+  color:#e0ff76; text-shadow:0 0 .2em #b7ff5260;
+}
+body .hero[data-clock=cyberpunk] .count {
+  font-weight:600;
+  font-size:calc(clamp(32px,11vw,64px) * var(--timer-scale)); letter-spacing:-.065em;
+}
+@media(min-width:900px) {
+  body.tab-view #live .hero[data-clock=cyberpunk] .count {
+    font-size:calc(clamp(44px,7.7vw,132px) * var(--timer-scale));
+  }
+}
+body[data-theme=cyberpunk] .hero progress::-webkit-progress-bar,
+.hero[data-clock=cyberpunk] progress::-webkit-progress-bar { background:#3b4230; }
+body[data-theme=cyberpunk] .hero progress::-webkit-progress-value,
+.hero[data-clock=cyberpunk] progress::-webkit-progress-value {
+  border-radius:0; background:repeating-linear-gradient(90deg,#e0ff76 0 8px,#708838 8px 10px);
+}
+
+body[data-theme=cyberpunk] #live,
+#live:has(.hero[data-clock=cyberpunk]) { position:relative; }
+body[data-theme=cyberpunk] #live:has(.hero)::after,
+#live:has(.hero[data-clock=cyberpunk])::after {
+  content:""; position:absolute; inset:1px 1px auto; height:2px; pointer-events:none;
+  background:linear-gradient(90deg,transparent,#80f6ec,#e0ff76,transparent);
+  transform:scaleX(.25); animation:terminal-rail 6s ease-in-out infinite alternate;
+}
+@keyframes terminal-rail {
+  from { transform:translateX(-33%) scaleX(.3); opacity:.4; }
+  to { transform:translateX(33%) scaleX(.3); opacity:.9; }
+}
+.terminal-matrix { display:none; }
+body[data-theme=cyberpunk] .terminal-matrix {
+  display:block; position:relative; isolation:isolate; overflow:hidden;
+  margin:10px 0; padding:9px 10px 10px; border:1px solid var(--line);
+  background:#121018; color:var(--accent); font:10px/1.5 JetBrainsMono,Consolas,monospace;
+}
+body[data-theme=cyberpunk] .terminal-matrix::before {
+  content:""; position:absolute; inset:0 0 auto; height:28px; z-index:-1;
+  background:linear-gradient(transparent,#c7ff7628 90%,#b9f55575);
+  transform:translateY(-100%); animation:terminal-scan 5s linear infinite;
+}
+.matrix-heading { display:flex; justify-content:space-between; gap:6px; margin-bottom:6px; color:#b5b9a0; }
+.matrix-codes { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:4px; }
+.matrix-codes span { text-align:center; padding:3px 0; border:1px solid #3e482b; }
+.matrix-codes span:nth-child(4n+2) {
+  color:#80f6ec; border-color:#80f6ec55;
+  animation:terminal-signal 5s ease-in-out infinite alternate;
+}
+.matrix-codes span:nth-child(6) { animation-delay:-3s; }
+.matrix-codes span:nth-child(10) { animation-delay:-1.5s; }
+@keyframes terminal-scan { to { transform:translateY(120px); } }
+@keyframes terminal-signal { to { background:#80f6ec35; box-shadow:inset 0 0 8px #80f6ec30; } }
+body[data-theme=cyberpunk].no-motion .terminal-matrix::before,.no-motion .matrix-codes span,
+body.no-motion #live#live::after { animation:none; }
+@media(prefers-reduced-motion:reduce) {
+  body[data-theme=cyberpunk] .terminal-matrix::before,.matrix-codes span,body #live#live::after { animation:none; }
+}

@@ -189,7 +189,7 @@ $('fullscreen').addEventListener('click', async () => {
 });
 document.addEventListener('fullscreenchange', () => { $('fullscreen').textContent = document.fullscreenElement ? 'Exit fullscreen' : 'Enter fullscreen'; updateIcons(appearance.dotIcons); });
 document.addEventListener('keydown', event => {
-  if (event.key === 'Escape' && document.fullscreenElement && !$('settingsPanel').open) {
+  if (event.key === 'Escape' && document.fullscreenElement && !document.querySelector('dialog[open]')) {
     document.exitFullscreen().catch(() => {});
   }
 });
@@ -202,7 +202,13 @@ function showSection(id) {
   $(id).scrollIntoView({block:'start'});
 }
 function showImport() { showSection('settings'); $('file').focus({preventScroll:true}); }
-for (const id of ['helpShortcut','getStarted','setupGuide']) $(id).addEventListener('click', () => showSection('help'));
+for (const id of ['getStarted','setupGuide']) $(id).addEventListener('click', () => showSection('help'));
+$('helpShortcut').addEventListener('click', () => $('helpPanel').showModal());
+$('closeHelp').addEventListener('click', () => $('helpPanel').close());
+$('helpImportGuide').addEventListener('click', () => {
+  $('helpPanel').close();
+  showSection('help');
+});
 for (const id of ['goImport','haveFile','importShortcut','setupImport']) $(id).addEventListener('click', showImport);
 document.querySelectorAll('[data-section]').forEach(b => b.addEventListener('click', () => showSection(b.dataset.section)));
 $('skipWelcome').addEventListener('click', async () => { onboardingDismissed = true; if (saved) saved.onboardingDismissed = true; render(); await chrome.storage.local.set({ onboardingDismissed:true }); });

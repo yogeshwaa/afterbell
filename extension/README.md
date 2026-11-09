@@ -1,5 +1,19 @@
 # Afterbell
 
+## v1.14.0
+
+The question-mark button opens Help & support, with direct links for support and feedback alongside the built-in timetable guide. The full-tab dashboard uses more of the viewport, with a wider settings panel and a clearer active class.
+
+
+## v1.13.0
+
+Enter ↑ ↑ ↓ ↓ ← → ← → B A on the dashboard to open the hidden Breach Protocol puzzle. Match the upload sequence by alternating columns and rows, using eight buffer slots and 45 seconds. Press Escape to return.
+
+
+## v1.12.0
+
+The Cyberpunk theme now uses lime panels, cyan signals, and an animated code matrix. The terminal countdown can also be used with other themes.
+
 ## v1.10.1
 
 Shorter interface copy, simpler settings labels and Helvetica periods in Doto text. Timetable, privacy and reminder behavior are unchanged.
@@ -128,3 +142,10 @@ Countdown colons use one circular dot per position (two dots total), independent
 If a newer release is available, **Update** opens the download and reload instructions. **Remind me later** hides the notice for 24 hours for that version.
 
 Copyright © WA 2026
+
+In Settings → Design, choose **Cyberpunk** to preview the lime terminal palette, cyan highlights, and animated code matrix. The **Cyberpunk terminal** countdown style can also be selected on its own. Use **Enable animation** to turn the effects off, or your system’s reduced-motion setting. Select **Apply** to save.
+
+### v1.14.1
+Refined Helvetica labels, settings and Help typography, consistent control spacing and quieter current-class status. Dotted branding and countdowns keep their established character.
+
+UI review guided by unslop by Damir Sokolovsky (@heydamir), CC BY 4.0.
