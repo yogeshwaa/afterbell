@@ -5,10 +5,9 @@ let updateRevision=0;
 async function update() {
   const revision=++updateRevision;
   try {
-  const { events = [], appearance = {} } = await readData();
+  const { events = [] } = await readData();
   if(revision!==updateRevision)return;
-  const prefix = appearance.dotIcons === false ? 'solid' : 'icon';
-  await chrome.action.setIcon({ path: { 16: `icons/${prefix}-16.png`, 32: `icons/${prefix}-32.png`, 48: `icons/${prefix}-48.png` } });
+  await chrome.action.setIcon({ path: { 16: `icons/icon-16.png`, 32: `icons/icon-32.png`, 48: `icons/icon-48.png` } });
   if(revision!==updateRevision)return;
   const { current } = currentAndNext(events);
   const e = current[0];

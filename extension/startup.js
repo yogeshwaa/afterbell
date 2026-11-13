@@ -37,7 +37,7 @@ async function playStartup() {
   const splash = document.createElement('div');
   splash.className = 'startup-splash';
   splash.setAttribute('aria-hidden', 'true');
-  const bell = brandMark(true);
+  const bell = brandMark();
   splash.append(bell);
   document.body.append(splash);
   ring(bell);

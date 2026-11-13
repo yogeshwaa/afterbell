@@ -39,3 +39,9 @@ export async function eraseData(){
 }
 export async function readReminderHistory(){const {reminderHistoryVault}=await chrome.storage.local.get('reminderHistoryVault');return reminderHistoryVault?await decrypt(reminderHistoryVault):[];}
 export async function writeReminderHistory(values){await chrome.storage.local.set({reminderHistoryVault:await encrypt(values)});}
+export async function loadCanvasColours(vault) {
+  return vault ? await decrypt(vault) : {};
+}
+export async function saveCanvasColours(mappings) {
+  await chrome.storage.local.set({ canvasColoursVault: await encrypt(mappings) });
+}

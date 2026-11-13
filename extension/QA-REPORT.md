@@ -1,21 +1,28 @@
-# Afterbell v1.10.0 — Verification
+# Afterbell v1.16.5 bug and visual review
 
-## New feature checks
+## Findings and fixes
 
-29 break/day-model cases and 61 real-extension browser checks passed. Period-marker centres were compared against their actual Period-label centres with less than one CSS pixel difference, across all 14 interface fonts and widths of 375, 430, 900 and 1440px.
+| Finding | Fix |
+| --- | --- |
+| The active class shifted the time column 8 px. | Give every row the same padding. Use the subject colour for the active row border and tint. |
+| Cancelling a settings edit replaced a pinned date with today. | Store the pinned date separately from the input field and preserve it when cancelling a draft. |
+| A one-second refresh could interrupt an unfinished date edit. | Keep rendering the last committed date while the field is being edited. Update the field when it loses focus. |
+| Uploaded video continued playing with system reduced motion enabled. The animation switch also hid still photos. | Pause video and hide GIF backgrounds when reduced motion is on. Keep still backgrounds visible. |
+| Apply could start another save while a reminder permission request was pending. | Capture the draft and lock Apply and Cancel until the permission request and save finish. A denial leaves the draft available to retry. |
+| At narrow widths the countdown and lineup touched, and the rail forced a sparse lineup to stay tall. | Separate the panels, narrow the rail and time columns, and size the rail to the actual list. |
+| The desktop panels pushed the footer below the bottom at 1440 × 900, even with a short lineup. | Account for the header and footer in panel sizing. |
+| Help labels used decorative numbers, and the prototype's clock separator looked heavier than the digits. | Simplify Help to action labels and use two round dots in the prototype clock. |
 
-The browser checks also cover fixed 32×18px switches and 12px thumbs for every font, numbered 01–06 Doto navigation, named/inferred break rows, estimation labels, inference/visibility toggles, threshold validation, Apply/Cancel, saved preferences, recess/lunch live countdowns, optional percentage, complete-day state and no horizontal overflow. No uncaught browser errors were observed.
+Layout references included [Subjective's weekday timetable](https://app.subjective.candra.dev/timetable) and [Google Calendar's day and week views](https://support.google.com/calendar/answer/6110849). [Nothing OS](https://nothing.tech/nothing-os) informed the restrained chrome and clock treatment.
 
-Model checks cover the actual supplied Sentral sample (20-minute recess, 40-minute lunch), named breaks, legacy titles, generic Break, subjects that must not be mistaken for breaks, missing period numbers, long/free gaps, overlap handling, percentage boundaries, empty/future/completed days, and excluding breaks from class reminders.
+## Verification
 
-## Regression checks
+- 133 Chromium extension checks covering import, appearance, six clock styles, media, settings, tab and fullscreen behavior. No uncaught browser errors.
+- 57 browser checks for period alignment, recess and lunch, switches and responsive layout.
+- 36 notification, alarm and offscreen audio checks, plus 11 consent checks including repeated Apply during a pending permission request.
+- 14 local privacy and deletion checks, plus 12 browser restart and delayed operation checks.
+- 90 calendar, day boundary, reminder planning and school-day model cases.
+- Additional targeted runs covered the date edit and reduced motion fixes, Canvas colour matching and refresh, A/B rollover, the minigame, and the clickable layout prototype.
+- Visually reviewed the extension at 1440 px and 320 px, including the timetable and Help dialogs. The visual samples use fictional timetable entries.
 
-137 real-extension regression checks, 12 saved-state/concurrency checks, and 14 privacy/encryption/deletion checks passed. Existing calendar, day-end and reminder-plan checks also passed. Tests used isolated Windows Chromium profiles with the real extension loaded.
-
-## Behavior and limits
-
-Explicit breaks come from the selected calendar. Inferred gaps are estimates, not authoritative bell times. They can be disabled separately from named breaks. Long gaps or skipped period numbers are labelled free periods/gaps. No new permissions or network access were added.
-
-The percentage measures elapsed time from first class start to last class end, including breaks. The vertical fill interpolates through displayed rows so period markers align with the correct labels even when text wraps. Missing period labels fall back to subject-row alignment. The percentage is off by default.
-
-These results describe the tested browser and fixtures, rather than guaranteeing the absence of all bugs across every platform.
+Canvas was exercised with a simulated Dashboard. Notification delivery used an isolated browser fixture with permissions pregranted. The permission request itself was simulated for denial and repeated Apply. The standalone layout prototype uses sample data.

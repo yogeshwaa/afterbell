@@ -1,13 +1,21 @@
-import { parseICS, trackingState, dayKey } from './calendar.js';
+import { parseICS, trackingState, dayKey, breakType } from './calendar.js';
 import {schoolDay,dayProgress} from './school-day.js';
 import { defaults, fonts, remainingText, clockState } from './appearance.js';
 import { updateIcons } from './icons.js';
-import { readData, writeData, eraseData } from './storage.js';
+import { readData, writeData, eraseData, loadCanvasColours } from './storage.js';
+import { setupCanvasColours, subjectColour, subjectKey } from './canvas-colours.js';
+import { cycleWeek, monday, offsetDay, weekStart } from './week-cycle.js';
 let appearance = { ...defaults }, preview = false, previewTime = 0;
 const $ = id => document.getElementById(id);
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 let onboardingDismissed = false;
 let saved = null, wallpaper = null, reminderAudio = null, saving = false, mediaRevision = 0;
-let importRevision = 0, soundRevision = 0, lastToday = '', tabView = false;
+let importRevision = 0, soundRevision = 0, pinnedDate = '', tabView = false;
+let weekAnchor, selectedWeek = 'A', cycleOffset = 0, weekSaving = false;
+let canvasColours = {};
+let canvasRevision = 0;
+const cycleDate = new Intl.DateTimeFormat('en-AU', {day:'numeric', month:'short', timeZone:'UTC'});
+const shortDate = key => cycleDate.format(new Date(key + 'T00:00:00Z'));
 let dayCache = { events: null, zone: '', days: new Map(),models:new Map(),options:'' };
 let events = [], zone = 'Australia/Sydney', fileName = '';
 const time = t => new Intl.DateTimeFormat('en-AU', { timeZone: zone, hour: 'numeric', minute: '2-digit' }).format(t);
@@ -72,11 +80,18 @@ function renderDayRail(day,now){
   position=Math.max(top,Math.min(bottom,position));
   const track=node('div','','day-rail-track'),fill=node('div','','day-rail-fill');track.style.top=`${top}px`;fill.style.transform=`scaleY(${Math.max(0,(position-top)/Math.max(1,bottom-top))})`;track.append(fill);rail.append(track);
   for(const m of state.markers){const index=rows.findIndex(r=>r.event.kind==='class'&&r.event.start===m.start);const marker=node('span',m.label,'period-marker'+(m.active?' current':m.passed?' passed':''));marker.style.top=`${anchors[index]??14}px`;marker.title=`${m.provided?'Period':'Class'} ${m.label} · ${time(m.start)}`;rail.append(marker);}
-  const head=node('span','','day-rail-now');head.style.top=`${position}px`;rail.append(head);
+  if (state.fraction > 0 && state.fraction < 1) {
+    const head = node('span', '', 'day-rail-now');
+    head.style.top = `${position}px`;
+    rail.append(head);
+  }
 }
 function card(e, active, now) {
   const isBreak=e.kind==='break';
   const box = node('div', '', 'hero');
+  if (!isBreak && !preview && events.includes(e)) {
+    box.style.setProperty('--subject-colour', subjectColour(e, canvasColours));
+  }
   box.append(node('div', active ? isBreak?'On a break':'In class now' : isBreak?'Next break':'Next class', 'eyebrow class-state'), node('h2', e.title+(e.inferred?' · estimated':'')));
   const state = clockState(e, active, now, zone);
   box.dataset.clock = appearance.clockStyle;
@@ -106,8 +121,6 @@ function render() {
   const now = Date.now();
   if($('settingsPanel').open){$('settingsPanel').style.setProperty('--settings-heading-height',document.querySelector('.settings-heading').getBoundingClientRect().height+'px');$('settingsPanel').style.setProperty('--settings-nav-height',document.querySelector('.settings-nav').getBoundingClientRect().height+'px');}
   const today = dayKey(now, zone);
-  if (lastToday && $('date').value === lastToday) $('date').value = today;
-  lastToday = today;
   const welcomeVisible = !events.length && !onboardingDismissed && !preview;
   $('welcome').hidden = !welcomeVisible;
   document.querySelector('.dashboard').hidden = welcomeVisible;
@@ -117,6 +130,16 @@ function render() {
   const demo = { title: 'Preview · Design and Technology', room: 'M3.10', teacher: 'Example teacher', period: '1', start: previewTime - 18 * 60000, end: previewTime + 36 * 60000 };
   const { current, next, kind } = preview ? { current: [demo], kind:'active' } : trackingState(events, zone, now);
   const currentBreak=!preview&&dayFor(today).entries.find(e=>e.kind==='break'&&!e.free&&e.start<=now&&e.end>now);
+  const nextDay = next && dayKey(next.start, zone);
+  const automaticDate = !current.length && !currentBreak && nextDay && nextDay > today ? nextDay : today;
+  const shownDate = pinnedDate || automaticDate;
+  if (document.activeElement !== $('date') && $('date').value !== shownDate) $('date').value = shownDate;
+  $('autoDate').hidden = !pinnedDate;
+  $('lineupContext').textContent = !pinnedDate && shownDate !== today
+    ? `Next school day · ${date(next.start)}`
+    : shownDate === today ? 'Today' : shortDate(shownDate);
+  const thisWeek = cycleWeek(today, weekAnchor);
+  $('openCycle').textContent = weekAnchor ? `Week ${thisWeek} · A/B` : 'A/B cycle';
   $('live').replaceChildren();
   if (current.length) { for (const e of current) $('live').append(card(e, true, now)); }
   else if(currentBreak)$('live').append(card(currentBreak,true,now));
@@ -131,11 +154,12 @@ function render() {
   const sample = current[0] || (kind==='upcoming' && next) || { ...demo, title: 'Example class', start: now - 18*60000, end: now + 36*60000 };
   $('draftPreview').replaceChildren(card(sample, sample.start <= now && sample.end > now, now));
   $('classes').replaceChildren();
-  const day=dayFor($('date').value),selected=day.entries;
+  const day=dayFor(shownDate),selected=day.entries;
   for (const e of selected) {
     const active = e.start <= now && now < e.end;
     const row = node('div', '', 'class' + (active ? ' active' : ''));
     if(e.kind==='break')row.classList.add('break-row');
+    else row.style.setProperty('--subject-colour', subjectColour(e, canvasColours));
     const times = node('div', time(e.start), 'times'); times.append(node('span', time(e.end)));
     const content = node('div', ''); const title = node('div', e.title, 'subject');
     if (active) title.append(node('span', 'NOW', 'pill'));
@@ -165,8 +189,86 @@ $('file').addEventListener('change', async ev => {
   } catch (err) { if (revision === importRevision) $('message').textContent = err.message; }
   ev.target.value = '';
 });
-$('date').addEventListener('change', render);
-$('zone').addEventListener('change', () => { zone = $('zone').value; $('date').value = dayKey(Date.now(), zone); render(); updateDraft(); });
+$('date').addEventListener('change', () => { pinnedDate = $('date').value; render(); });
+$('date').addEventListener('blur', render);
+$('autoDate').addEventListener('click', () => { pinnedDate = ''; render(); });
+$('zone').addEventListener('change', () => { zone = $('zone').value; render(); updateDraft(); });
+
+function renderCycle() {
+  const today = dayKey(Date.now(), zone);
+  const current = cycleWeek(today, weekAnchor);
+  const start = weekStart(today, selectedWeek, weekAnchor, cycleOffset);
+  const currentPage = monday(today) === start;
+  $('cycleRange').textContent = `${shortDate(start)} – ${shortDate(offsetDay(start, 6))}`;
+  $('cycleStatus').textContent = weekAnchor ? `This week is Week ${current}` : 'Set the current week to align A and B.';
+  for (const button of document.querySelectorAll('[data-cycle-week]')) {
+    button.setAttribute('aria-pressed', String(button.dataset.cycleWeek === selectedWeek));
+  }
+  $('setCurrentWeek').textContent = `Set this week to ${selectedWeek}`;
+  $('setCurrentWeek').disabled = weekSaving || (!!weekAnchor && selectedWeek === current);
+  $('cycleDays').replaceChildren();
+  for (let i = 0; i < 7; i++) {
+    const key = offsetDay(start, i);
+    const entries = dayFor(key).entries;
+    if (i > 4 && !entries.length) continue;
+    const label = new Intl.DateTimeFormat('en-AU', {weekday:'long', timeZone:'UTC'}).format(new Date(key + 'T00:00:00Z'));
+    const day = node('section', '', 'cycle-day');
+    const button = node('button', `${label} · ${shortDate(key)}${key === today ? ' · Today' : ''}`, 'cycle-day-link');
+    button.type = 'button';
+    button.addEventListener('click', () => { pinnedDate = key; $('cyclePanel').close(); render(); });
+    day.append(button);
+    for (const entry of entries) {
+      const line = node('div', '', 'cycle-class');
+      line.append(node('time', `${time(entry.start)} – ${time(entry.end)}`), node('span', entry.title, 'cycle-subject'));
+      if (entry.kind !== 'break') line.style.setProperty('--subject-colour', subjectColour(entry, canvasColours));
+      if (entry.kind !== 'break' && entry.period && appearance.showPeriod) line.append(node('small', `P${entry.period}`));
+      day.append(line);
+    }
+    if (!entries.length) day.append(node('p', 'No classes in this export', 'muted'));
+    $('cycleDays').append(day);
+  }
+  $('cycleRange').dataset.current = String(currentPage);
+}
+$('openCycle').addEventListener('click', () => {
+  selectedWeek = cycleWeek(dayKey(Date.now(), zone), weekAnchor); cycleOffset = 0;
+  $('cycleError').textContent = ''; renderCycle(); $('cyclePanel').showModal();
+});
+$('closeCycle').addEventListener('click', () => $('cyclePanel').close());
+for (const button of document.querySelectorAll('[data-cycle-week]')) button.addEventListener('click', () => {
+  selectedWeek = button.dataset.cycleWeek; renderCycle();
+});
+for (const [id, step] of [['prevCycle', -1], ['nextCycle', 1]]) $(id).addEventListener('click', () => { cycleOffset += step; renderCycle(); });
+$('setCurrentWeek').addEventListener('click', async () => {
+  const anchor = {monday:monday(dayKey(Date.now(), zone)), week:selectedWeek};
+  weekSaving = true; $('setCurrentWeek').disabled = true; $('cycleError').textContent = '';
+  try { await chrome.storage.local.set({weekAnchor:anchor}); weekAnchor = anchor; selectedWeek = anchor.week; cycleOffset = 0; }
+  catch { $('cycleError').textContent = 'Could not save the current week. Try again.'; }
+  finally { weekSaving = false; renderCycle(); render(); }
+});
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area !== 'local' || !changes.weekAnchor) return;
+  weekAnchor = changes.weekAnchor.newValue;
+  if ($('cyclePanel').open && !weekSaving) renderCycle();
+});
+function applyCanvasColours(mappings) {
+  canvasColours = mappings;
+  if ($('cyclePanel').open) renderCycle();
+  if (document.body.dataset.ready === 'true') render();
+}
+chrome.storage.onChanged.addListener(async (changes, area) => {
+  if (area !== 'local' || !changes.canvasColoursVault) return;
+  const revision = ++canvasRevision;
+  try {
+    const mappings = await loadCanvasColours(changes.canvasColoursVault.newValue);
+    if (revision === canvasRevision) applyCanvasColours(mappings);
+  } catch { /* Keep the last readable colours. */ }
+});
+setupCanvasColours({
+  getSubjects: () => new Map((saved?.events || []).filter(entry => !breakType(entry)).map(entry => [subjectKey(entry), entry])),
+  getMappings: () => canvasColours,
+  onChange: applyCanvasColours,
+  isFullTab: () => tabView
+});
 function openTab() { return chrome.tabs.create({ url: chrome.runtime.getURL('popup.html?view=tab') }); }
 $('expand').addEventListener('click', openTab);
 $('openTab').addEventListener('click', openTab);
@@ -222,6 +324,12 @@ async function init() {
   }
   updateViewControls();
   const data = await readData({migrate:true});
+  const revision = canvasRevision;
+  try {
+    const mappings = await loadCanvasColours(data.canvasColoursVault);
+    if (revision === canvasRevision) applyCanvasColours(mappings);
+  } catch { /* An unreadable palette does not prevent opening the timetable. */ }
+  weekAnchor = data.weekAnchor;
   if (!tabView && !data.events?.length && !data.onboardingDismissed && !data.introOpened) {
     await chrome.tabs.create({ url: chrome.runtime.getURL('popup.html?view=tab&intro=1') });
     await chrome.storage.local.set({ introOpened: true });
@@ -233,6 +341,9 @@ async function init() {
   }
   onboardingDismissed = !!data.onboardingDismissed;
   appearance = { ...defaults, ...data.appearance };
+  for (const preference of ['bodyFont', 'timerFont']) {
+    if (['consolas', 'space'].includes(appearance[preference])) appearance[preference] = 'ui';
+  }
   for (const id of ['bodyFont','timerFont']) { for (const [key,[label]] of Object.entries(fonts)) { const option = node('option',label); option.value = key; $(id).append(option); } }
   wallpaper = data.wallpaper || null; reminderAudio=data.reminderAudio||null;
   syncControls(); setWallpaper(wallpaper);
@@ -256,7 +367,7 @@ function applyAppearance() {
   updateIcons(appearance.dotIcons);
   document.body.dataset.theme = appearance.theme;
   document.body.dataset.background = appearance.background;
-  document.body.classList.toggle('no-motion', !appearance.motion);
+  applyMotion();
   const style = document.body.style;
   style.setProperty('--body-font', (fonts[appearance.bodyFont] || fonts.ui)[1]);
   style.setProperty('--timer-font', (fonts[appearance.timerFont] || fonts.doto)[1]);
@@ -267,9 +378,18 @@ function applyAppearance() {
   style.setProperty('--timer-scale', appearance.scale / 100); style.setProperty('--dim', appearance.dim / 100);
   document.querySelector('.schedule').hidden = !appearance.showSchedule;
   $('soundSource').textContent=reminderAudio?reminderAudio.name+' · '+Math.ceil(reminderAudio.duration)+' sec':'No custom audio selected.';
-  const video = $('wallpaper');
-  if (appearance.motion && appearance.background === 'upload') video.play().catch(() => {}); else video.pause();
 }
+function applyMotion() {
+  const animate = appearance.motion && !reducedMotion.matches;
+  document.body.classList.toggle('no-motion', !animate);
+  const video = $('wallpaper');
+  if (animate && appearance.background === 'upload' && video.hasAttribute('src')) {
+    video.play().catch(() => {});
+  } else {
+    video.pause();
+  }
+}
+reducedMotion.addEventListener('change', applyMotion);
 function snapshot() { return { appearance: {...appearance}, wallpaper, reminderAudio, events, fileName, zone, onboardingDismissed }; }
 function isDirty() { return !!saved && (JSON.stringify(appearance) !== JSON.stringify(saved.appearance) || wallpaper !== saved.wallpaper || reminderAudio !== saved.reminderAudio || events !== saved.events || fileName !== saved.fileName || zone !== saved.zone); }
 function updateDraft() {
@@ -285,20 +405,30 @@ async function commitDraft() {
   if(appearance.remindersEnabled){
     if(!$('reminderLead').checkValidity()||!Number.isFinite(+appearance.reminderLead)||+appearance.reminderLead<0||+appearance.reminderLead>60){$('notificationStatus').textContent='Choose a lead time between 0 and 60 minutes.';showSection('notifications');return;}
     if(appearance.reminderSound==='custom'&&!reminderAudio){$('notificationStatus').textContent='Upload a custom sound or choose a built-in sound.';showSection('notifications');return;}
-    const needed=['notifications'];
-    if(!['none','system'].includes(appearance.reminderSound)&&+appearance.reminderVolume>0)needed.push('offscreen');
-    try { const granted=await chrome.permissions.request({permissions:needed});if(!granted){$('notificationStatus').textContent='Permission was not granted. Changes have not been applied.';showSection('notifications');return;} }
-    catch(err){$('notificationStatus').textContent=err.message;return;}
   }
-  saving = true; updateDraft();
   // Capture one revision: newer edits remain a draft if they arrive while saving.
   const next = snapshot();
+  saving = true; updateDraft();
   try {
+    if (next.appearance.remindersEnabled) {
+      const needed = ['notifications'];
+      if (!['none', 'system'].includes(next.appearance.reminderSound) && +next.appearance.reminderVolume > 0) needed.push('offscreen');
+      try {
+        if (!await chrome.permissions.request({ permissions: needed })) {
+          $('notificationStatus').textContent = 'Permission was not granted. Changes have not been applied.';
+          showSection('notifications');
+          return;
+        }
+      } catch (error) {
+        $('notificationStatus').textContent = error.message;
+        return;
+      }
+    }
     await writeData(next);
     saved = next;
     $('notificationStatus').textContent=next.appearance.remindersEnabled?'Reminders applied. Chrome must be running to deliver alerts.':'Class reminders are disabled.';
     $('appearanceMessage').textContent = 'Changes applied.';
-    $('message').textContent = events.length ? 'Timetable saved.' : 'No timetable saved.';
+    $('message').textContent = next.events.length ? 'Timetable saved.' : 'No timetable saved.';
   } catch (err) { $('appearanceMessage').textContent = 'Could not apply changes. Your saved settings are unchanged. Try a smaller background.'; }
   finally { saving = false; updateDraft(); }
 }
@@ -309,7 +439,7 @@ function cancelDraft() {
   importRevision++;
   appearance = {...saved.appearance}; wallpaper = saved.wallpaper; reminderAudio=saved.reminderAudio; events = saved.events; fileName = saved.fileName; zone = saved.zone; onboardingDismissed = saved.onboardingDismissed;
   preview = false; $('preview').textContent = 'Preview styles';
-  $('zone').value = zone; $('date').value = dayKey(Date.now(), zone);
+  $('zone').value = zone;
   $('source').textContent = fileName ? fileName + ' · ' + events.length + ' classes' : '';
   syncControls(); setWallpaper(wallpaper); render(); updateDraft();
   $('appearanceMessage').textContent = 'Unapplied changes discarded.'; $('message').textContent = '';
@@ -323,6 +453,7 @@ for (const key of Object.keys(defaults)) $(key).addEventListener('input', () => 
 });
 function setWallpaper(media) {
   $('wallpaper').removeAttribute('src'); $('backdrop').style.backgroundImage = '';
+  document.body.toggleAttribute('data-gif-wallpaper', media?.type === 'image/gif');
   if (!media) { applyAppearance(); return; }
   if (media.type.startsWith('video/')) { $('wallpaper').src = media.url; $('wallpaper').muted = true; }
   else $('backdrop').style.backgroundImage = 'url("' + media.url + '")';

@@ -1,5 +1,40 @@
 # Afterbell
 
+## v1.16.5
+
+The daily lineup aligns active and upcoming classes, the day rail follows the length of the lineup, and cancelling settings preserves the date you are viewing. Uploaded backgrounds respect system reduced motion, and Apply waits for the reminder permission request before saving.
+
+
+## v1.16.4
+
+Times, dates and timetable labels use the system sans-serif with plain zeros. Saved Space Grotesk and Consolas selections open in system sans on upgrade.
+
+
+## v1.16.3
+
+Space Grotesk is the default interface font and replaces Consolas in timetable times and interface labels. Existing Consolas font selections open in Space Grotesk. The Doto countdown remains the default.
+
+
+## v1.16.2
+
+The Afterbell bell uses the same dot-matrix logo in the header, welcome screen, startup animation, browser tab, and toolbar. The dot-matrix preference still switches interface controls between dotted and outline icons.
+
+
+## v1.16.1
+
+Subject colours now appear on the main countdown and daily lineup. Canvas matches and Afterbell fallback colours use the same palette in the weekly grid and daily view.
+
+
+## v1.16.0
+
+The A/B timetable shows colour-coded classes. To use your Canvas colours, open the Canvas Dashboard in Card View, click Afterbell in the Chrome toolbar, then choose Sync Canvas colours under A/B cycle or Settings → Timetable. Check the suggested matches and save. Repeat to refresh after editing colours in Canvas. Confirmed mappings are encrypted on this device.
+
+
+## v1.15.0
+
+The lineup follows the next scheduled school day after the final class. Use A/B cycle to browse the dated timetable and set which week is current. Afterbell alternates the labels every Monday; actual class dates come from the imported file. Selecting a day pins it until you choose Back to live.
+
+
 ## v1.14.0
 
 The question-mark button opens Help & support, with direct links for support and feedback alongside the built-in timetable guide. The full-tab dashboard uses more of the viewport, with a wider settings panel and a clearer active class.

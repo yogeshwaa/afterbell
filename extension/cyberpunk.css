@@ -99,7 +99,7 @@ body[data-theme=cyberpunk] #live:has(.hero)::after,
 body[data-theme=cyberpunk] .terminal-matrix {
   display:block; position:relative; isolation:isolate; overflow:hidden;
   margin:10px 0; padding:9px 10px 10px; border:1px solid var(--line);
-  background:#121018; color:var(--accent); font:10px/1.5 JetBrainsMono,Consolas,monospace;
+  background:#121018; color:var(--accent); font:10px/1.5 JetBrainsMono,"Segoe UI",system-ui,Arial,sans-serif;
 }
 body[data-theme=cyberpunk] .terminal-matrix::before {
   content:""; position:absolute; inset:0 0 auto; height:28px; z-index:-1;

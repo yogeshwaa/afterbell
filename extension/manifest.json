@@ -1,11 +1,13 @@
 {
   "manifest_version": 3,
   "name": "Afterbell: Class Countdown",
-  "version": "1.14.1",
+  "version": "1.16.5",
   "description": "Import your Sentral ICS timetable. See your current class, time remaining, room and teacher.",
   "permissions": [
     "storage",
-    "alarms"
+    "alarms",
+    "activeTab",
+    "scripting"
   ],
   "action": {
     "default_popup": "popup.html",
